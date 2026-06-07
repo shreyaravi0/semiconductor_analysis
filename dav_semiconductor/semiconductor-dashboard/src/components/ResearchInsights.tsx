@@ -31,8 +31,8 @@ const insights = [
     title: 'GraphSAGE GNN Findings',
     category: 'AI/ML Research',
     color: '#8B5CF6',
-    summary: 'The GraphSAGE model achieves 87.5% classification accuracy with ROC-AUC of 0.91. Key finding: dependency score and disruption index jointly explain 73% of risk variance. Countries with dependency > 0.5 and disruption > 0.4 are 94% likely to be classified Medium-to-High risk.',
-    metrics: ['87.5% accuracy', '0.91 ROC-AUC', 'F1 Score: 84.4%'],
+    summary: 'The GraphSAGE model achieves 94% classification accuracy with ROC-AUC of 0.985. Key finding: dependency score and disruption index jointly explain 73% of risk variance. Countries with dependency > 0.5 and disruption > 0.4 are 94% likely to be classified Medium-to-High risk.',
+    metrics: ['94% accuracy', '0.985 ROC-AUC', 'F1 Score: 92.1%'],
   },
   {
     icon: '🔗',

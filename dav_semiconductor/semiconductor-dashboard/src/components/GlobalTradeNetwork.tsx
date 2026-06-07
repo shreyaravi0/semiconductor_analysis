@@ -54,12 +54,37 @@ export default function GlobalTradeNetwork({ onSelectCountry, selectedCountry }:
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [colorBy, setColorBy] = useState<'risk' | 'trade'>('risk');
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadT3().then(d => { setData(d); setLoading(false); });
   }, []);
 
-  const maxTrade = useMemo(() => Math.max(...data.map(d => d.total_trade_B_2022)), [data]);
+  const maxTrade = useMemo(() => data.length > 0 ? Math.max(...data.map(d => d.total_trade_B_2022)) : 1, [data]);
+
+  const top10Data = useMemo(() => {
+    return [...data].sort((a, b) => b.total_trade_B_2022 - a.total_trade_B_2022).slice(0, 10);
+  }, [data]);
+
+  const mapNodesData = useMemo(() => {
+    const nodesMap = new Map<string, T3Row>();
+    top10Data.forEach(d => nodesMap.set(d.country_tableau, d));
+    
+    if (selectedCountry) {
+      const selectedData = data.find(d => d.country_tableau === selectedCountry);
+      if (selectedData) nodesMap.set(selectedData.country_tableau, selectedData);
+    }
+    
+    return Array.from(nodesMap.values());
+  }, [top10Data, data, selectedCountry]);
+
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return data.filter(d => 
+      d.country_tableau.toLowerCase().includes(searchQuery.toLowerCase()) && 
+      !top10Data.find(t => t.country_tableau === d.country_tableau)
+    ).slice(0, 8);
+  }, [data, searchQuery, top10Data]);
 
   const getNodeColor = (row: T3Row) => {
     if (colorBy === 'risk') return getRiskColor(row.risk_2022);
@@ -82,7 +107,7 @@ export default function GlobalTradeNetwork({ onSelectCountry, selectedCountry }:
           <div>
             <p className="section-label">Section 03 · Visual Centerpiece</p>
             <h2 className="section-title">Global Trade Network</h2>
-            <p style={{ color: '#64748B', fontSize: 14, marginTop: 8 }}>Interactive semiconductor supply chain map · Click any country node to drill down across all panels</p>
+            <p style={{ color: '#64748B', fontSize: 14, marginTop: 8 }}>Interactive semiconductor supply chain map · Top 10 countries displayed · Search for others</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {[['Risk Level', 'risk'], ['Trade Volume', 'trade']].map(([label, key]) => (
@@ -99,15 +124,55 @@ export default function GlobalTradeNetwork({ onSelectCountry, selectedCountry }:
             <div style={{ height: 480, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>Loading trade network...</div>
           ) : (
             <div style={{ position: 'relative' }} onMouseMove={e => setMousePos({ x: e.clientX, y: e.clientY })}>
-              {/* SVG World Map */}
+              
+              {/* Search Bar overlay */}
+              <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 20 }}>
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Search other countries..." 
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    style={{
+                      background: 'rgba(15,23,42,0.8)',
+                      border: '1px solid rgba(59,130,246,0.3)',
+                      borderRadius: 8,
+                      padding: '8px 12px',
+                      color: '#fff',
+                      fontSize: 13,
+                      width: 220,
+                      outline: 'none',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  {searchResults.length > 0 && (
+                    <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 4, width: '100%', background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}>
+                      {searchResults.map(res => (
+                        <div key={res.country_tableau} 
+                             onClick={() => { onSelectCountry(res.country_tableau); setSearchQuery(''); }}
+                             style={{ padding: '8px 12px', cursor: 'pointer', fontSize: 13, color: '#94A3B8', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                             onMouseEnter={e => e.currentTarget.style.background = 'rgba(59,130,246,0.2)'}
+                             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                        >
+                          {res.country_tableau}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* SVG World Map Area */}
               <svg viewBox="0 0 950 520" style={{ width: '100%', background: 'linear-gradient(180deg, #0A0F1E 0%, #070B14 100%)' }}>
-                {/* Subtle grid */}
                 <defs>
                   <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
                     <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59,130,246,0.04)" strokeWidth="0.5" />
                   </pattern>
                 </defs>
                 <rect width="950" height="520" fill="url(#grid)" />
+
+                {/* Real World Map Background */}
+                <image href="/world-map.svg" width="950" height="620" x="0" y="-40" opacity="0.15" style={{ filter: 'invert(1) brightness(2)' }} />
 
                 {/* Longitude/Latitude lines */}
                 {[0, 100, 200, 300, 400, 500, 600, 700, 800, 900].map(x => (
@@ -118,20 +183,20 @@ export default function GlobalTradeNetwork({ onSelectCountry, selectedCountry }:
                 ))}
 
                 {/* Trade flow arcs */}
-                {data.slice(0, 15).map((row, i) => {
+                {mapNodesData.map((row, i) => {
                   const pos = COUNTRY_POSITIONS[row.country_tableau];
                   const usaPos = COUNTRY_POSITIONS['United States'];
                   if (!pos || !usaPos || pos.label === 'USA') return null;
                   const cpx = (pos.x + usaPos.x) / 2;
                   const cpy = Math.min(pos.y, usaPos.y) - 60;
                   return (
-                    <path key={i} d={`M ${usaPos.x} ${usaPos.y} Q ${cpx} ${cpy} ${pos.x} ${pos.y}`}
-                      fill="none" stroke="rgba(59,130,246,0.07)" strokeWidth={row.total_trade_B_2022 / maxTrade * 3 + 0.3} />
+                    <path key={`arc-${i}`} d={`M ${usaPos.x} ${usaPos.y} Q ${cpx} ${cpy} ${pos.x} ${pos.y}`}
+                      fill="none" stroke="rgba(59,130,246,0.15)" strokeWidth={row.total_trade_B_2022 / maxTrade * 3 + 0.3} />
                   );
                 })}
 
                 {/* Country nodes */}
-                {data.map((row, i) => {
+                {mapNodesData.map((row, i) => {
                   const pos = COUNTRY_POSITIONS[row.country_tableau];
                   if (!pos) return null;
                   const size = getNodeSize(row);
@@ -140,7 +205,7 @@ export default function GlobalTradeNetwork({ onSelectCountry, selectedCountry }:
                   const isHovered = hovered?.country_tableau === row.country_tableau;
 
                   return (
-                    <g key={i} style={{ cursor: 'pointer' }}
+                    <g key={`node-${i}`} style={{ cursor: 'pointer' }}
                       onClick={() => onSelectCountry(row.country_tableau)}
                       onMouseEnter={() => setHovered(row)}
                       onMouseLeave={() => setHovered(null)}>
@@ -190,7 +255,7 @@ export default function GlobalTradeNetwork({ onSelectCountry, selectedCountry }:
                 </div>
               ))
             )}
-            <span style={{ fontSize: 11, color: '#475569', marginLeft: 'auto' }}>Node size = Trade volume · Click to select country</span>
+            <span style={{ fontSize: 11, color: '#475569', marginLeft: 'auto' }}>Node size = Trade volume · Only Top 10 + selected are shown</span>
           </div>
         </div>
       </div>

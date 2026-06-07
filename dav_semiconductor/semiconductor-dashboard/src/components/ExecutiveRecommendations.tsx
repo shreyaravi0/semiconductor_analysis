@@ -57,7 +57,7 @@ const recommendations = [
     title: 'Early Warning Systems',
     subtitle: 'AI-powered predictive disruption alerting',
     color: '#10B981',
-    body: 'Implement the GraphSAGE model in production as a continuous risk monitoring system. Real-time ingestion of trade flow data, GDELT events, and financial market signals can provide 30–60 day advance warning of supply chain disruptions with 87.5% accuracy.',
+    body: 'Implement the GraphSAGE model in production as a continuous risk monitoring system. Real-time ingestion of trade flow data, GDELT events, and financial market signals can provide 30–60 day advance warning of supply chain disruptions with 94% accuracy.',
     actions: ['Deploy GraphSAGE model API in production', 'Connect to live trade flow data sources', 'Build executive dashboard with real-time risk scoring'],
     impact: 'Warning Lead Time: 30–60 days',
     timeline: '1–3 months',

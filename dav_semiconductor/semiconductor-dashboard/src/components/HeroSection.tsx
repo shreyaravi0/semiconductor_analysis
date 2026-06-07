@@ -35,10 +35,11 @@ export default function HeroSection() {
 
         {/* Main title */}
         <h1 className="gradient-text" style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(32px, 5vw, 64px)', fontWeight: 800, lineHeight: 1.1, marginBottom: 16, maxWidth: 900 }}>
-          Semiconductor Supply Chain<br />Risk Intelligence Platform
+          Chipshield<br />
+          <span style={{ fontSize: 'clamp(24px, 3vw, 40px)', fontWeight: 600 }}>Risk Intelligence Platform</span>
         </h1>
         <p style={{ fontSize: 'clamp(14px, 2vw, 18px)', color: '#94A3B8', marginBottom: 16, maxWidth: 700, lineHeight: 1.6 }}>
-          AI-Powered Global Trade, Disruption and Risk Monitoring System
+          AI-Powered Global Trade, Disruption and Risk Monitoring System for Semiconductor Supply Chains
         </p>
         <p style={{ fontSize: 13, color: '#475569', marginBottom: 56, maxWidth: 650 }}>
           Powered by GraphSAGE Graph Neural Networks · 40 Countries · 4-Year Analysis (2019–2022)

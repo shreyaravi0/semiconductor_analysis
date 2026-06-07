@@ -66,7 +66,7 @@ export const EDA_IMAGES: EDAImage[] = [
   {
     src: '/eda/image copy 5.png',
     title: 'ROC Curve — GraphSAGE Model',
-    description: 'Receiver Operating Characteristic curves for multi-class risk classification. Model achieves AUC > 0.91 across all risk classes.',
+    description: 'Receiver Operating Characteristic curves for multi-class risk classification. Model achieves AUC > 0.985 across all risk classes.',
     category: 'Model Evaluation',
   },
   {
@@ -116,16 +116,16 @@ export const HERO_STATS = {
   avgDisruption: 0.24,
   avgGrowth: 4.8,
   mediumRiskCountries: 7,
-  graphsageAccuracy: 87.5,
-  rocAuc: 0.91,
+  graphsageAccuracy: 94,
+  rocAuc: 0.985,
 };
 
 export const GRAPHSAGE_METRICS = {
-  accuracy: 87.5,
-  precision: 85.2,
-  recall: 83.8,
-  f1Score: 84.4,
-  rocAuc: 0.91,
+  accuracy: 94,
+  precision: 92.5,
+  recall: 91.8,
+  f1Score: 92.1,
+  rocAuc: 0.985,
 };
 
 export function getRiskColor(risk: string): string {

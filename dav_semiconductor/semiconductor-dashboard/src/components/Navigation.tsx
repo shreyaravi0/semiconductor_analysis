@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useState, useEffect } from 'react';
 
@@ -50,9 +51,11 @@ export default function Navigation() {
       <div style={{ maxWidth: 1600, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>⚡</div>
+          <div style={{ width: 36, height: 36, borderRadius: 8, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1E293B' }}>
+            <img src="/logo.png" alt="Chipshield" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif", lineHeight: 1 }}>SemiRisk</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif", lineHeight: 1 }}>Chipshield</div>
             <div style={{ fontSize: 9, color: '#475569', fontWeight: 500, lineHeight: 1, marginTop: 2 }}>Intelligence Platform</div>
           </div>
         </div>
